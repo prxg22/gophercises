@@ -1,3 +1,3 @@
-module github.com/prxg22/gophercises/pkg/logger
+module github.com/prxg22/gophercises/pkg
 
 go 1.20
