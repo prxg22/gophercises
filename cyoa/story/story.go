@@ -36,13 +36,24 @@ func ParseFile(path string) (*Story, error) {
 	return &story, nil
 }
 
-func (s *Story) Arcs() []Arc {
-	arcs := []Arc{}
-	i := 0
-	for _, v := range *s {
-		arcs[i] = v
-		i++
+func (s *Story) GetArc(key string) *Arc {
+	arc := (*s)[key]
+
+	if arc.Title == "" {
+		return nil
 	}
 
-	return arcs
+	return &arc
+}
+
+func (s *Story) Intro() *Arc {
+	return s.GetArc("intro")
+}
+
+func (s *Story) Marshal() ([]byte, error) {
+	return json.Marshal(*s)
+}
+
+func (a *Arc) Marshal() ([]byte, error) {
+	return json.Marshal(*a)
 }

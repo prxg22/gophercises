@@ -1,16 +1,27 @@
 package main
 
 import (
-	"github/prxg22/gophercises/cyoa/story"
 	"log"
+	"net/http"
+
+	"github.com/prxg22/gophercises/cyoa/handler"
+	"github.com/prxg22/gophercises/cyoa/story"
 )
 
 func main() {
-	st, err := story.ParseFile("./goopher.json")
+	st, parseErr := story.ParseFile("goopher.json")
 
-	if err != nil {
-		log.Fatal(err)
+	if parseErr != nil {
+		log.Fatal(parseErr)
 	}
 
-	log.Println(st)
+	handler := &handler.StoryHandler{Story: st}
+
+	log.Println("Starting server on :8080...")
+	listeningErr := http.ListenAndServe(":8080", handler)
+
+	if listeningErr != nil {
+		log.Fatal(listeningErr)
+	}
+
 }
