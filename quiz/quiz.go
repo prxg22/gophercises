@@ -31,7 +31,7 @@ func run(file *os.File, t *int) (int, int, error) {
 	ans := make(chan string)
 	len_lines := len(lines)
 	for i, line := range lines {
-		question, answer, timer := line[0], line[1], time.NewTimer(time.Duration(*t) * time.Second)
+		question, answer, timer := line[0], line[1], time.NewTimer(time.Duration(*t)*time.Second)
 
 		fmt.Printf("Question: %v ", question)
 		go getAnswer(&ans)
@@ -43,7 +43,7 @@ func run(file *os.File, t *int) (int, int, error) {
 			} else {
 				return i, len_lines, fmt.Errorf("wrong answer")
 			}
-		case <-timer.C :
+		case <-timer.C:
 			return i, len_lines, fmt.Errorf("time's up")
 		}
 	}
@@ -63,12 +63,12 @@ func main() {
 	flag.Parse()
 
 	file, err := os.Open(*path)
-	
+
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	
+
 	defer file.Close()
 
 	correct, total, err := run(file, t)
