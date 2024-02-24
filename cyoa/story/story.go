@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-type Story struct {
+type Arc struct {
 	Title   string   `json:"title"`
 	Story   []string `json:"story"`
 	Options []Option `json:"options"`
@@ -17,14 +17,13 @@ type Option struct {
 	Arc  string `json:"arc"`
 }
 
-func (s *Story) String() {
-	return
-}
+type Story map[string]Arc
 
 func ParseFile(path string) (*Story, error) {
-	var story Story
+	story := make(Story)
 	file, readErr := os.ReadFile(path)
-	if readErr == nil {
+
+	if readErr != nil {
 		return nil, fmt.Errorf("unable read file on path: %v. %v", path, readErr)
 	}
 
@@ -35,4 +34,15 @@ func ParseFile(path string) (*Story, error) {
 	}
 
 	return &story, nil
+}
+
+func (s *Story) Arcs() []Arc {
+	arcs := []Arc{}
+	i := 0
+	for _, v := range *s {
+		arcs[i] = v
+		i++
+	}
+
+	return arcs
 }
