@@ -20,20 +20,31 @@ type Option struct {
 type Story map[string]Arc
 
 func ParseFile(path string) (*Story, error) {
-	story := make(Story)
 	file, readErr := os.ReadFile(path)
 
 	if readErr != nil {
 		return nil, fmt.Errorf("unable read file on path: %v. %v", path, readErr)
 	}
 
-	parseErr := json.Unmarshal(file, &story)
+	j, parseErr := ParseJSON(file)
+
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	return j, nil
+}
+
+func ParseJSON(j []byte) (*Story, error) {
+	story := &Story{}
+
+	parseErr := json.Unmarshal(j, story)
 
 	if parseErr != nil {
 		return nil, fmt.Errorf("unable to parse JSON: %v", parseErr)
 	}
 
-	return &story, nil
+	return story, nil
 }
 
 func (s *Story) GetArc(key string) *Arc {

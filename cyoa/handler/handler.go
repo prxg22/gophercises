@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 	"strings"
 
@@ -28,19 +29,25 @@ func (sh *StoryHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	if arcKey == "" || arc == nil {
 		logger.Warn("Arc \"%v\" not found!", arcKey)
 		res.WriteHeader(http.StatusNotFound)
-		res.Write([]byte("not found"))
+		res.Write([]byte("arc not found"))
 		return
 	}
 
-	json, marshalArcErr := arc.Marshal()
+	tmpl, tmplErr := template.New("template.html").ParseFiles("template.html")
 
-	if marshalArcErr != nil {
-		logger.Error(marshalArcErr)
+	if tmplErr != nil {
+		logger.Error(tmplErr)
 		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(tmplErr.Error()))
 		return
 	}
 
 	res.WriteHeader(http.StatusOK)
-	res.Header().Add("Content-Type", "application/json")
-	res.Write(json)
+	res.Header().Add("Content-Type", "text/html")
+	logger.Info("%v", tmpl)
+	err := tmpl.Execute(res, *arc)
+	if err != nil {
+		logger.Error(err)
+	}
+
 }
