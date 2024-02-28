@@ -26,21 +26,17 @@ func ParseFile(path string) (*Story, error) {
 		return nil, fmt.Errorf("unable read file on path: %v. %v", path, readErr)
 	}
 
-	j, parseErr := ParseJSON(file)
-
-	if parseErr != nil {
+	if j, parseErr := ParseJSON(file); parseErr == nil {
+		return j, nil
+	} else {
 		return nil, parseErr
 	}
-
-	return j, nil
 }
 
 func ParseJSON(j []byte) (*Story, error) {
 	story := &Story{}
 
-	parseErr := json.Unmarshal(j, story)
-
-	if parseErr != nil {
+	if parseErr := json.Unmarshal(j, story); parseErr != nil {
 		return nil, fmt.Errorf("unable to parse JSON: %v", parseErr)
 	}
 
@@ -48,17 +44,12 @@ func ParseJSON(j []byte) (*Story, error) {
 }
 
 func (s *Story) GetArc(key string) *Arc {
-	arc := (*s)[key]
 
-	if arc.Title == "" {
-		return nil
+	if arc := (*s)[key]; arc.Title != "" {
+		return &arc
 	}
 
-	return &arc
-}
-
-func (s *Story) Intro() *Arc {
-	return s.GetArc("intro")
+	return nil
 }
 
 func (s *Story) Marshal() ([]byte, error) {

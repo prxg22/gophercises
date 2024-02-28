@@ -15,14 +15,10 @@ func main() {
 		log.Fatal(parseErr)
 	}
 
+	log.Println("Starting server on :8080...")
 	handler := &handler.StoryHandler{Story: st}
 
-	log.Println("Starting server on :8080...")
-
-	listeningErr := http.ListenAndServe(":8080", handler)
-
-	if listeningErr != nil {
+	if listeningErr := http.ListenAndServe(":8080", handler); listeningErr != nil {
 		log.Fatal(listeningErr)
 	}
-
 }
